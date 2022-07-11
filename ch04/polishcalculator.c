@@ -7,6 +7,7 @@
 int getop(char []);
 void push(double);
 double pop(void);
+double top(void);
 
 /* reverse Polish calculator */
 main()
@@ -40,6 +41,9 @@ main()
         case '%':
             op2 = pop();
             push((int)pop() % (int)op2);
+            break;
+        case 't':
+            printf("\t%.8g\n", top());
             break;
         case '\n':
             printf("\t%.8g\n", pop());
@@ -77,6 +81,12 @@ double pop(void)
     }
 }
 
+/* top: return top value from stack without popping */
+double top(void)
+{
+    return val[sp];
+}
+
 #include <ctype.h>
 
 int getch(void);
@@ -92,6 +102,11 @@ int getop(char s[])
     s[1] = '\0';
     if (!isdigit(c) && c != '.')
         return c;       /* not a number */
+    if (c == 't' || c == 'T') {
+        while ((c = getch()) != '\n')
+            ;
+        return 't';     /* print top command */
+    }
     i = 0;
     if (isdigit(c))     /* collect integer part */
         while (isdigit(s[++i] = c = getch()))
