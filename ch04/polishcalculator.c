@@ -103,9 +103,8 @@ int getop(char s[])
     if (!isdigit(c) && c != '.')
         return c;       /* not a number */
     if (c == 't' || c == 'T') {
-        while ((c = getch()) != '\n')
-            ;
-        return 't';     /* print top command */
+        c = getch();
+        return 't';     /* print top of stack */
     }
     i = 0;
     if (isdigit(c))     /* collect integer part */
