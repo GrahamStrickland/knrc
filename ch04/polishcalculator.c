@@ -8,6 +8,9 @@ int getop(char []);
 void push(double);
 double pop(void);
 double top(void);
+void duplicate(void);
+void swap(void);
+void clear(void);
 
 /* reverse Polish calculator */
 main()
@@ -43,7 +46,20 @@ main()
             push((int)pop() % (int)op2);
             break;
         case 't':
+        case 'T':
             printf("\t%.8g\n", top());
+            break;
+        case 'd':
+        case 'D':
+            duplicate();
+            break;
+        case 's':
+        case 'S':
+            swap();
+            break;
+        case 'c':
+        case 'C':
+            clear();
             break;
         case '\n':
             printf("\t%.8g\n", pop());
@@ -87,6 +103,27 @@ double top(void)
     return val[sp];
 }
 
+/* duplicate: duplicate the top stack value */
+void duplicate(void) 
+{
+    push(top());
+}
+
+/* swap: swap the top two values on the stack */
+void swap(void) {
+    int op1 = pop();
+    int op2 = pop();
+    push(op1);
+    push(op2);
+}
+
+/* clear: clear all values from the stack */
+void clear(void) {
+    int op;
+    while ((op = pop()) != 0.0)
+    ;
+}
+
 #include <ctype.h>
 
 int getch(void);
@@ -100,9 +137,10 @@ int getop(char s[])
     while ((s[0] = c = getch()) == ' ' || c == '\t')
         ;
     s[1] = '\0';
-    if (c == 't' || c == 'T') {
+    if (c == 't' || c == 'T' || c == 'd' || c == 'D'
+        || c == 's' || c == 'S' || c == 'c' || c == 'C') {
         c = getch();
-        return 't';     /* print top of stack */
+        return s[0];     /* return character command */
     }
     if (!isdigit(c) && c != '.')
         return c;       /* not a number */
