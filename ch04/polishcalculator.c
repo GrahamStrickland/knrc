@@ -100,12 +100,12 @@ int getop(char s[])
     while ((s[0] = c = getch()) == ' ' || c == '\t')
         ;
     s[1] = '\0';
-    if (!isdigit(c) && c != '.')
-        return c;       /* not a number */
     if (c == 't' || c == 'T') {
         c = getch();
         return 't';     /* print top of stack */
     }
+    if (!isdigit(c) && c != '.')
+        return c;       /* not a number */
     i = 0;
     if (isdigit(c))     /* collect integer part */
         while (isdigit(s[++i] = c = getch()))
