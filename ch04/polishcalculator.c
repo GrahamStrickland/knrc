@@ -106,22 +106,30 @@ double top(void)
 /* duplicate: duplicate the top stack value */
 void duplicate(void) 
 {
-    push(top());
+    if (sp < MAXVAL) {
+        val[sp+1] = val[sp];
+        sp++;
+    } 
+    else 
+        printf("error: stack full, can't duplicate");
 }
 
 /* swap: swap the top two values on the stack */
 void swap(void) {
-    int op1 = pop();
-    int op2 = pop();
-    push(op1);
-    push(op2);
+    if (sp > 1) {
+        int temp;
+        temp = val[sp];
+        val[sp] = val[sp-1];
+        val[sp-1] = temp;
+    }
+    else
+        printf("error: stack contains less than two values, can't swap");
 }
 
 /* clear: clear all values from the stack */
 void clear(void) {
-    int op;
-    while ((op = pop()) != 0.0)
-    ;
+    while (sp > 0)
+        val[sp--] = 0.0;
 }
 
 #include <ctype.h>
@@ -139,7 +147,7 @@ int getop(char s[])
     s[1] = '\0';
     if (c == 't' || c == 'T' || c == 'd' || c == 'D'
         || c == 's' || c == 'S' || c == 'c' || c == 'C') {
-        c = getch();
+        getchar();
         return s[0];     /* return character command */
     }
     if (!isdigit(c) && c != '.')
