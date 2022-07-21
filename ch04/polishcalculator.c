@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>     /* for atof() */
+#include <math.h>       /* for sin(), exp(), pow(), etc. */
 
 #define MAXOP       100     /* max size of operand or operator */
 #define NUMBER      '0'     /* signal that a number was found */
@@ -44,6 +45,10 @@ main()
         case '%':
             op2 = pop();
             push((int)pop() % (int)op2);
+            break;
+        case '^':
+            op2 = pop();
+            push(pow(pop(), op2));
             break;
         case 't':
         case 'T':
