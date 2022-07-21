@@ -76,7 +76,6 @@ main()
 
 int sp = 0;             /* next free stack position */
 double val[MAXVAL];     /* value stack */
-
 /* push: push f onto value stack */
 void push(double f)
 {
@@ -111,7 +110,7 @@ void duplicate(void)
         sp++;
     } 
     else 
-        printf("error: stack full, can't duplicate");
+        printf("error: stack full, can't duplicate\n");
 }
 
 /* swap: swap the top two values on the stack */
@@ -123,13 +122,15 @@ void swap(void) {
         val[sp-1] = temp;
     }
     else
-        printf("error: stack contains less than two values, can't swap");
+        printf("error: stack contains less than two values, can't swap\n");
 }
 
 /* clear: clear all values from the stack */
 void clear(void) {
-    while (sp > 0)
-        val[sp--] = 0.0;
+    while (sp >= 0) {
+        val[sp] = 0.0;
+        sp--;
+    }
 }
 
 #include <ctype.h>
