@@ -17,7 +17,7 @@ void clear(void);
 main()
 {
     int type;
-    double op2;
+    double op1, op2;
     char s[MAXOP];
 
     while ((type = getop(s)) != EOF) {
@@ -48,7 +48,13 @@ main()
             break;
         case '^':
             op2 = pop();
-            push(pow(pop(), op2));
+            op1 = pop();
+            if (op1 == 0.0 && op2 <= 0.0)
+                printf("error: domain error\n");
+            else if (op1 < 0.0)
+                push(pow(op1, (int)op2));
+            else
+                push(pow(op1, op2));
             break;
         case 't':
         case 'T':
@@ -132,10 +138,9 @@ void swap(void) {
 
 /* clear: clear all values from the stack */
 void clear(void) {
-    while (sp >= 0) {
-        val[sp] = 0.0;
-        sp--;
-    }
+    val[sp] = 0.0;
+    while (sp > 0)
+        val[--sp] = 0.0;
 }
 
 #include <ctype.h>
