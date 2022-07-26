@@ -49,8 +49,10 @@ main()
         case '^':
             op2 = pop();
             op1 = pop();
-            if (op1 == 0.0 && op2 <= 0.0)
+            if (op1 == 0.0 && op2 <= 0.0) {
                 printf("error: domain error\n");
+                push(0.0);
+            }
             else if (op1 < 0.0)
                 push(pow(op1, (int)op2));
             else
@@ -151,19 +153,24 @@ void ungetch(int);
 /* getop: get next operator or numeric operand */
 int getop(char s[])
 {
-    int i, c;
+    int i = 0, c;
 
     while ((s[0] = c = getch()) == ' ' || c == '\t')
         ;
     s[1] = '\0';
-    if (c == 't' || c == 'T' || c == 'd' || c == 'D'
+    if (c == '-') {     /* test for negative number */
+        if (isdigit(s[++i] = c = getch())) 
+            s[0] = '-';
+        else
+            ungetch(c);
+    }
+    else if (c == 't' || c == 'T' || c == 'd' || c == 'D'
         || c == 's' || c == 'S' || c == 'c' || c == 'C') {
-        getchar();
+        getch();
         return s[0];     /* return character command */
     }
     if (!isdigit(c) && c != '.')
         return c;       /* not a number */
-    i = 0;
     if (isdigit(c))     /* collect integer part */
         while (isdigit(s[++i] = c = getch()))
             ;
