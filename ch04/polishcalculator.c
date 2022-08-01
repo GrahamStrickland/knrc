@@ -89,6 +89,7 @@ main()
 
 int sp = 0;             /* next free stack position */
 double val[MAXVAL];     /* value stack */
+
 /* push: push f onto value stack */
 void push(double f)
 {
@@ -159,10 +160,14 @@ int getop(char s[])
         ;
     s[1] = '\0';
     if (c == '-') {     /* test for negative number */
-        if (isdigit(s[++i] = c = getch())) 
+        if (isdigit(c = getch())) {
             s[0] = '-';
-        else
+            s[1] = c;
+            i++;
+        } else {
             ungetch(c);
+            return s[0];
+        }
     }
     else if (c == 't' || c == 'T' || c == 'd' || c == 'D'
         || c == 's' || c == 'S' || c == 'c' || c == 'C') {
