@@ -129,7 +129,7 @@ void duplicate(void)
 
 /* swap: swap the top two values on the stack */
 void swap(void) {
-    if (sp > 1) {
+    if (sp >= 1) {
         int temp;
         temp = val[sp];
         val[sp] = val[sp-1];
