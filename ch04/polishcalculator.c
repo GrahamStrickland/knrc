@@ -160,16 +160,16 @@ int getop(char s[])
         ;
     s[1] = '\0';
     if (c == '-') {     /* test for negative number */
-        if (isdigit(c = getch())) {
+        if (isdigit(c = getch())) { /* negative number input */
             s[0] = '-';
             s[1] = c;
             i++;
-        } else {
+        } else {    /* minus operator input, put back on buffer */
             ungetch(c);
             return s[0];
         }
-    }
-    else if (c == 't' || c == 'T' || c == 'd' || c == 'D'
+    }   /* character command encountered */
+    if (c == 't' || c == 'T' || c == 'd' || c == 'D'
         || c == 's' || c == 'S' || c == 'c' || c == 'C') {
         getch();
         return s[0];     /* return character command */
