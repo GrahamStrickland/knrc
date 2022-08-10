@@ -1,9 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>     /* for atof() */
 #include <math.h>       /* for sin(), exp(), pow(), etc. */
+#include <string.h>     /* for function commands */
+#include <ctype.h>
 
 #define MAXOP       100     /* max size of operand or operator */
 #define NUMBER      '0'     /* signal that a number was found */
+#define COMMAND     '1'     /* signal that a function command was found */
+#define BUFSIZE 100
+
+char buf[BUFSIZE];  /* buffer for ungetch */
+int bufp = 0;       /* next free position in buf */
 
 int getop(char []);
 void push(double);
@@ -12,18 +19,24 @@ double top(void);
 void duplicate(void);
 void swap(void);
 void clear(void);
+void funceval(char []);
+int getch(void);
+void ungetch(int);
 
 /* reverse Polish calculator */
 main()
 {
     int type;
-    double op1, op2;
+    double op2;
     char s[MAXOP];
 
     while ((type = getop(s)) != EOF) {
         switch (type) {
         case NUMBER:
             push(atof(s));
+            break;
+        case COMMAND:
+            funceval(s);
             break;
         case '+':
             push(pop() + pop());
@@ -45,34 +58,6 @@ main()
         case '%':
             op2 = pop();
             push((int)pop() % (int)op2);
-            break;
-        case '^':
-            op2 = pop();
-            op1 = pop();
-            if (op1 == 0.0 && op2 <= 0.0) {
-                printf("error: domain error\n");
-                push(0.0);
-            }
-            else if (op1 < 0.0)
-                push(pow(op1, (int)op2));
-            else
-                push(pow(op1, op2));
-            break;
-        case 't':
-        case 'T':
-            printf("\t%.8g\n", top());
-            break;
-        case 'd':
-        case 'D':
-            duplicate();
-            break;
-        case 's':
-        case 'S':
-            swap();
-            break;
-        case 'c':
-        case 'C':
-            clear();
             break;
         case '\n':
             printf("\t%.8g\n", pop());
@@ -146,10 +131,47 @@ void clear(void) {
         val[--sp] = 0.0;
 }
 
-#include <ctype.h>
+/* funceval: evaluate user entry stored in s */
+void funceval(char s[]) {
+    int op1, op2;
 
-int getch(void);
-void ungetch(int);
+    if (strcmp(s, "top") == 0) 
+        printf("\t%.8g\n", top());
+    else if (strcmp(s, "duplicate") == 0)
+        duplicate();
+    else if (strcmp(s, "swap") == 0)
+        swap();
+    else if (strcmp(s, "clear") == 0)
+        clear();
+    else if (strcmp(s, "sin") == 0)
+        push(sin(pop()));
+    else if (strcmp(s, "cos") == 0)
+        push(cos(pop()));
+    else if (strcmp(s, "tan") == 0)
+        push(tan(pop()));
+    else if (strcmp(s, "asin") == 0)
+        push(asin(pop()));
+    else if (strcmp(s, "acos") == 0)
+        push(acos(pop()));
+    else if (strcmp(s, "atan") == 0)
+        push(atan(pop()));
+    else if (strcmp(s, "exp") == 0)
+        push(exp(pop()));
+    else if (strcmp(s, "pow") == 0) {
+        op2 = pop();
+        op1 = pop();
+        if (op1 == 0.0 && op2 <= 0.0) {
+            printf("error: domain error\n");
+            push(0.0);
+        }
+        else if (op1 < 0.0)
+            push(pow(op1, (int)op2));
+        else
+            push(pow(op1, op2));
+    } else 
+        printf("error: invalid command\n");
+}
+
 
 /* getop: get next operator or numeric operand */
 int getop(char s[])
@@ -168,14 +190,18 @@ int getop(char s[])
             ungetch(c);
             return s[0];
         }
-    }   /* character command encountered */
-    if (c == 't' || c == 'T' || c == 'd' || c == 'D'
-        || c == 's' || c == 'S' || c == 'c' || c == 'C') {
-        getch();
-        return s[0];     /* return character command */
+    }   /* function command encountered */
+    if (isalpha(c)) {
+        s[0] = tolower(s[0]);
+        while (isalpha(s[++i] = c = tolower(getch())))
+            ;
+        if (c == '\n')
+            ungetch(c);
+        s[i] = '\0';
+        return COMMAND;
     }
     if (!isdigit(c) && c != '.')
-        return c;       /* not a number */
+        return c;       /* operator */
     if (isdigit(c))     /* collect integer part */
         while (isdigit(s[++i] = c = getch()))
             ;
@@ -187,11 +213,6 @@ int getop(char s[])
         ungetch(c);
     return NUMBER;
 }
-
-#define BUFSIZE 100
-
-char buf[BUFSIZE];  /* buffer for ungetch */
-int bufp = 0;       /* next free position in buf */
 
 int getch(void) /* get a (possibly pushed back) character */
 {
