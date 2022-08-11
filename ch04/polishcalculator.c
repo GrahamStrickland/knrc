@@ -2,15 +2,21 @@
 #include <stdlib.h>     /* for atof() */
 #include <math.h>       /* for sin(), exp(), pow(), etc. */
 #include <string.h>     /* for function commands */
-#include <ctype.h>
+#include <ctype.h>      /* for character manipulation */
 
-#define MAXOP       100     /* max size of operand or operator */
-#define NUMBER      '0'     /* signal that a number was found */
-#define COMMAND     '1'     /* signal that a function command was found */
-#define BUFSIZE 100
+#define BUFSIZE 100         /* size of character input buffer */
+#define MAXVAL  100         /* maximum depth of val stack */
+#define MAXOP   100         /* max size of operand or operator */
+#define NUMVARS 26          /* number of variables */
+#define NUMBER      '0'         /* signal that a number was found */
+#define COMMAND     '1'         /* signal that a function command was found */
+#define VARIABLE    '2'         /* signal that a variable command was found */
 
-char buf[BUFSIZE];  /* buffer for ungetch */
-int bufp = 0;       /* next free position in buf */
+int sp = 0;             /* next free stack position */
+int bufp = 0;           /* next free position in buf */
+double val[MAXVAL];     /* value stack */
+char buf[BUFSIZE];      /* buffer for ungetch */
+double vars[NUMVARS];   /* array for variables */
 
 int getop(char []);
 void push(double);
@@ -20,15 +26,19 @@ void duplicate(void);
 void swap(void);
 void clear(void);
 void funceval(char []);
+void addvar(char, double);
 int getch(void);
 void ungetch(int);
 
 /* reverse Polish calculator */
 main()
 {
-    int type;
+    int type, i;
     double op2;
     char s[MAXOP];
+
+    for (i = 0; i < NUMVARS; i++)   
+        vars[i] = 0.0;  /* initialize variables array to 0.0 */
 
     while ((type = getop(s)) != EOF) {
         switch (type) {
@@ -37,6 +47,9 @@ main()
             break;
         case COMMAND:
             funceval(s);
+            break;
+        case VARIABLE:
+            addvar(s[0], pop());
             break;
         case '+':
             push(pop() + pop());
@@ -69,11 +82,6 @@ main()
     }
     return 0;
 }
-
-#define MAXVAL  100     /* maximum depth of val stack */
-
-int sp = 0;             /* next free stack position */
-double val[MAXVAL];     /* value stack */
 
 /* push: push f onto value stack */
 void push(double f)
@@ -133,17 +141,21 @@ void clear(void) {
 
 /* funceval: evaluate user entry stored in s */
 void funceval(char s[]) {
-    int op1, op2;
+    int op1, op2, c;
 
-    if (strcmp(s, "top") == 0) 
+    if (strcmp(s, "top") == 0) {
+        c = getch();
         printf("\t%.8g\n", top());
-    else if (strcmp(s, "duplicate") == 0)
+    } else if (strcmp(s, "duplicate") == 0) {
+        c = getch();
         duplicate();
-    else if (strcmp(s, "swap") == 0)
+    } else if (strcmp(s, "swap") == 0) {
+        c = getch();
         swap();
-    else if (strcmp(s, "clear") == 0)
+    } else if (strcmp(s, "clear") == 0) {
+        c = getch();
         clear();
-    else if (strcmp(s, "sin") == 0)
+    } else if (strcmp(s, "sin") == 0)
         push(sin(pop()));
     else if (strcmp(s, "cos") == 0)
         push(cos(pop()));
@@ -172,6 +184,11 @@ void funceval(char s[]) {
         printf("error: invalid command\n");
 }
 
+/* addvar: save value val in variable var */
+void addvar(char var, double val)
+{
+    vars[tolower(var) - 48] = val;
+}
 
 /* getop: get next operator or numeric operand */
 int getop(char s[])
@@ -195,6 +212,8 @@ int getop(char s[])
         s[0] = tolower(s[0]);
         while (isalpha(s[++i] = c = tolower(getch())))
             ;
+        if (i == 1)
+            return VARIABLE;
         if (c == '\n')
             ungetch(c);
         s[i] = '\0';
