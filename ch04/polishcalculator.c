@@ -27,13 +27,14 @@ void swap(void);
 void clear(void);
 void funceval(char []);
 void addvar(char, double);
+double getvar(char);
 int getch(void);
 void ungetch(int);
 
 /* reverse Polish calculator */
 main()
 {
-    int type, i;
+    int type, i, varadded = 0;
     double op2;
     char s[MAXOP];
 
@@ -49,10 +50,16 @@ main()
             funceval(s);
             break;
         case VARIABLE:
-            addvar(s[0], pop());
+            varadded = 1;
+            push(getvar(s[0]));
             break;
         case '+':
-            push(pop() + pop());
+            if (!varadded)
+                push(pop() + pop());
+            else {
+                addvar(s[0], pop());
+                varadded = 0;
+            }
             break;
         case '*':
             push(pop() * pop());
@@ -188,6 +195,12 @@ void funceval(char s[]) {
 void addvar(char var, double val)
 {
     vars[tolower(var) - 48] = val;
+}
+
+/* getvar: return variable corresponding to var */
+double getvar(char var)
+{
+    return vars[tolower(var) - 48];
 }
 
 /* getop: get next operator or numeric operand */
