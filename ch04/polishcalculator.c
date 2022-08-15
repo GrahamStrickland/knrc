@@ -194,13 +194,13 @@ void funceval(char s[]) {
 /* addvar: save value val in variable var */
 void addvar(char var, double val)
 {
-    vars[tolower(var) - 48] = val;
+    vars[tolower(var) - 97] = val;
 }
 
 /* getvar: return variable corresponding to var */
 double getvar(char var)
 {
-    return vars[tolower(var) - 48];
+    return vars[tolower(var) - 97];
 }
 
 /* getop: get next operator or numeric operand */
