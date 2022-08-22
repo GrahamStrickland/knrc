@@ -8,9 +8,10 @@
 #define MAXVAL  100         /* maximum depth of val stack */
 #define MAXOP   100         /* max size of operand or operator */
 #define NUMVARS 26          /* number of variables */
-#define NUMBER      '0'         /* signal that a number was found */
-#define COMMAND     '1'         /* signal that a function command was found */
-#define VARIABLE    '2'         /* signal that a variable command was found */
+#define NUMBER      '0'     /* signal that a number was found */
+#define COMMAND     '1'     /* signal that a function command was found */
+#define VARSTO      '2'     /* signal that a variable must be stored */
+#define VARRET      '3'     /* signal that a variable must be retrieved */
 
 int sp = 0;             /* next free stack position */
 int bufp = 0;           /* next free position in buf */
@@ -34,7 +35,7 @@ void ungetch(int);
 /* reverse Polish calculator */
 main()
 {
-    int type, i, varadded = 0;
+    int type, i;
     double op2;
     char s[MAXOP];
 
@@ -49,17 +50,14 @@ main()
         case COMMAND:
             funceval(s);
             break;
-        case VARIABLE:
-            varadded = 1;
+        case VARRET:
             push(getvar(s[0]));
             break;
+        case VARSTO:
+            addvar(s[0], pop());
+            break;
         case '+':
-            if (!varadded)
-                push(pop() + pop());
-            else {
-                addvar(s[0], pop());
-                varadded = 0;
-            }
+            push(pop() + pop());
             break;
         case '*':
             push(pop() * pop());
@@ -226,11 +224,18 @@ int getop(char s[])
         while (isalpha(s[++i] = c = tolower(getch())))
             ;
         if (i == 1)
-            return VARIABLE;
+            return VARSTO;
         if (c == '\n')
             ungetch(c);
         s[i] = '\0';
-        return COMMAND;
+
+        if ((c = getch()) == '+')
+            return VARSTO;
+        else
+        {
+            ungetch(c);
+            return COMMAND;
+        }
     }
     if (!isdigit(c) && c != '.')
         return c;       /* operator */
