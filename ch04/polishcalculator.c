@@ -231,8 +231,7 @@ int getop(char s[])
 
         if ((c = getch()) == '+')
             return VARSTO;
-        else
-        {
+        else {
             ungetch(c);
             return COMMAND;
         }
