@@ -10,8 +10,7 @@
 #define NUMVARS 26          /* number of variables */
 #define NUMBER      '0'     /* signal that a number was found */
 #define COMMAND     '1'     /* signal that a function command was found */
-#define VARSTO      '2'     /* signal that a variable must be stored */
-#define VARRET      '3'     /* signal that a variable must be retrieved */
+#define VARIABLE    '2'     /* signal that a variable was encountered */
 
 int sp = 0;             /* next free stack position */
 int bufp = 0;           /* next free position in buf */
@@ -36,7 +35,7 @@ void ungetch(int);
 main()
 {
     int type, i;
-    double op2;
+    double op;
     char s[MAXOP];
 
     for (i = 0; i < NUMVARS; i++)   
@@ -50,11 +49,11 @@ main()
         case COMMAND:
             funceval(s);
             break;
-        case VARRET:
-            push(getvar(s[0]));
-            break;
-        case VARSTO:
-            addvar(s[0], pop());
+        case VARIABLE:
+            if ((op = pop()) != 0.0)
+                addvar(s[0], op);
+            else
+                push(getvar(s[0]));
             break;
         case '+':
             push(pop() + pop());
@@ -63,19 +62,19 @@ main()
             push(pop() * pop());
             break;
         case '-':
-            op2 = pop();
-            push(pop() - op2);
+            op = pop();
+            push(pop() - op);
             break;
         case '/':
-            op2 = pop();
-            if (op2 != 0.0)
-                push(pop() / op2);
+            op = pop();
+            if (op != 0.0)
+                push(pop() / op);
             else
                 printf("error: zero divisor\n");
             break;
         case '%':
-            op2 = pop();
-            push((int)pop() % (int)op2);
+            op = pop();
+            push((int)pop() % (int)op);
             break;
         case '\n':
             printf("\t%.8g\n", pop());
@@ -224,17 +223,13 @@ int getop(char s[])
         while (isalpha(s[++i] = c = tolower(getch())))
             ;
         if (i == 1)
-            return VARSTO;
+            return VARIABLE;
         if (c == '\n')
             ungetch(c);
         s[i] = '\0';
 
-        if ((c = getch()) == '+')
-            return VARSTO;
-        else {
-            ungetch(c);
-            return COMMAND;
-        }
+        ungetch(c);
+        return COMMAND;
     }
     if (!isdigit(c) && c != '.')
         return c;       /* operator */
