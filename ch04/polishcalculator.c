@@ -10,7 +10,8 @@
 #define NUMVARS 26          /* number of variables */
 #define NUMBER      '0'     /* signal that a number was found */
 #define COMMAND     '1'     /* signal that a function command was found */
-#define VARIABLE    '2'     /* signal that a variable was encountered */
+#define OPERATOR    '2'     /* signal that an operator was found */
+#define VARIABLE    '3'     /* signal that a variable was encountered */
 
 int sp = 0;             /* next free stack position */
 int bufp = 0;           /* next free position in buf */
@@ -25,6 +26,7 @@ double top(void);
 void duplicate(void);
 void swap(void);
 void clear(void);
+void opeval(char []);
 void funceval(char []);
 void addvar(char, double);
 double getvar(char);
@@ -55,26 +57,8 @@ main()
             else
                 push(getvar(s[0]));
             break;
-        case '+':
-            push(pop() + pop());
-            break;
-        case '*':
-            push(pop() * pop());
-            break;
-        case '-':
-            op = pop();
-            push(pop() - op);
-            break;
-        case '/':
-            op = pop();
-            if (op != 0.0)
-                push(pop() / op);
-            else
-                printf("error: zero divisor\n");
-            break;
-        case '%':
-            op = pop();
-            push((int)pop() % (int)op);
+        case OPERATOR:
+            opeval(s);
             break;
         case '\n':
             printf("\t%.8g\n", pop());
@@ -117,10 +101,9 @@ double top(void)
 void duplicate(void) 
 {
     if (sp < MAXVAL) {
-        val[sp+1] = val[sp];
+        val[sp + 1] = val[sp];
         sp++;
-    } 
-    else 
+    } else
         printf("error: stack full, can't duplicate\n");
 }
 
@@ -131,8 +114,7 @@ void swap(void) {
         temp = val[sp];
         val[sp] = val[sp-1];
         val[sp-1] = temp;
-    }
-    else
+    } else
         printf("error: stack contains less than two values, can't swap\n");
 }
 
@@ -141,6 +123,35 @@ void clear(void) {
     val[sp] = 0.0;
     while (sp > 0)
         val[--sp] = 0.0;
+}
+
+/* opeval: evaluate user entry stored in s */
+void opeval(char s[]) {
+    int op = s[0];
+
+    switch (op) {
+    case '+':
+       push(pop() + pop());
+       break;
+    case '*':
+       push(pop() * pop());
+       break;
+    case '-':
+       op = pop();
+       push(pop() - op);
+       break;
+    case '/':
+       op = pop();
+       if (op != 0.0)
+           push(pop() / op);
+       else
+           printf("error: zero divisor\n");
+       break;
+    case '%':
+       op = pop();
+       push((int) pop() % (int) op);
+       break;
+    }
 }
 
 /* funceval: evaluate user entry stored in s */
@@ -208,16 +219,15 @@ int getop(char s[])
     while ((s[0] = c = getch()) == ' ' || c == '\t')
         ;
     s[1] = '\0';
-    if (c == '-') {     /* test for negative number */
+    if (c == '-') { /* test for negative number */
         if (isdigit(c = getch())) { /* negative number input */
             s[0] = '-';
-            s[1] = c;
-            i++;
+            s[++i] = c;
         } else {    /* minus operator input, put back on buffer */
             ungetch(c);
-            return s[0];
+            return s[i];
         }
-    }   /* function command encountered */
+    }   /* function command/variable in input */
     if (isalpha(c)) {
         s[0] = tolower(s[0]);
         while (isalpha(s[++i] = c = tolower(getch())))
@@ -227,12 +237,13 @@ int getop(char s[])
         if (c == '\n')
             ungetch(c);
         s[i] = '\0';
-
         ungetch(c);
         return COMMAND;
     }
-    if (!isdigit(c) && c != '.')
-        return c;       /* operator */
+    if (!isdigit(c) && c != '.') {  /* operator */
+        s[0] = c;
+        return OPERATOR;
+    }
     if (isdigit(c))     /* collect integer part */
         while (isdigit(s[++i] = c = getch()))
             ;
