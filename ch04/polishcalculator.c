@@ -1,23 +1,24 @@
 #include <stdio.h>
-#include <stdlib.h>     /* for atof() */
-#include <math.h>       /* for sin(), exp(), pow(), etc. */
-#include <string.h>     /* for function commands */
-#include <ctype.h>      /* for character manipulation */
+#include <stdlib.h>         /* for atof() */
+#include <math.h>           /* for sin(), exp(), pow(), etc. */
+#include <string.h>         /* for function commands */
+#include <ctype.h>          /* for character manipulation */
 
-#define BUFSIZE 100         /* size of character input buffer */
-#define MAXVAL  100         /* maximum depth of val stack */
-#define MAXOP   100         /* max size of operand or operator */
-#define NUMVARS 26          /* number of variables */
+#define BUFSIZE     100     /* size of character input buffer */
+#define MAXVAL      100     /* maximum depth of val stack */
+#define MAXOP       100     /* max size of operand or operator */
+#define NUMVARS     26      /* number of variables */
 #define NUMBER      '0'     /* signal that a number was found */
 #define COMMAND     '1'     /* signal that a function command was found */
 #define OPERATOR    '2'     /* signal that an operator was found */
 #define VARIABLE    '3'     /* signal that a variable was encountered */
+#define NEWLINE     '4'     /* signal that a newline was encountered */
 
-int sp = 0;             /* next free stack position */
-int bufp = 0;           /* next free position in buf */
-double val[MAXVAL];     /* value stack */
-char buf[BUFSIZE];      /* buffer for ungetch */
-double vars[NUMVARS];   /* array for variables */
+int sp = 0;                 /* next free stack position */
+int bufp = 0;               /* next free position in buf */
+double val[MAXVAL];         /* value stack */
+char buf[BUFSIZE];          /* buffer for ungetch */
+double vars[NUMVARS];       /* array for variables */
 
 int getop(char []);
 void push(double);
@@ -26,10 +27,9 @@ double top(void);
 void duplicate(void);
 void swap(void);
 void clear(void);
-void opeval(char []);
 void funceval(char []);
-void addvar(char, double);
-double getvar(char);
+void opeval(char);
+void vareval(char);
 int getch(void);
 void ungetch(int);
 
@@ -37,11 +37,10 @@ void ungetch(int);
 main()
 {
     int type, i;
-    double op;
     char s[MAXOP];
 
     for (i = 0; i < NUMVARS; i++)   
-        vars[i] = 0.0;  /* initialize variables array to 0.0 */
+        vars[i] = 0.0;  /* initialize variables array */
 
     while ((type = getop(s)) != EOF) {
         switch (type) {
@@ -51,16 +50,13 @@ main()
         case COMMAND:
             funceval(s);
             break;
-        case VARIABLE:
-            if ((op = pop()) != 0.0)
-                addvar(s[0], op);
-            else
-                push(getvar(s[0]));
-            break;
         case OPERATOR:
-            opeval(s);
+            opeval(s[0]);
             break;
-        case '\n':
+        case VARIABLE:
+            vareval(s[0]);
+            break;
+        case NEWLINE:
             printf("\t%.8g\n", pop());
             break;
         default:
@@ -125,35 +121,6 @@ void clear(void) {
         val[--sp] = 0.0;
 }
 
-/* opeval: evaluate user entry stored in s */
-void opeval(char s[]) {
-    int op = s[0];
-
-    switch (op) {
-    case '+':
-       push(pop() + pop());
-       break;
-    case '*':
-       push(pop() * pop());
-       break;
-    case '-':
-       op = pop();
-       push(pop() - op);
-       break;
-    case '/':
-       op = pop();
-       if (op != 0.0)
-           push(pop() / op);
-       else
-           printf("error: zero divisor\n");
-       break;
-    case '%':
-       op = pop();
-       push((int) pop() % (int) op);
-       break;
-    }
-}
-
 /* funceval: evaluate user entry stored in s */
 void funceval(char s[]) {
     int op1, op2, c;
@@ -199,16 +166,46 @@ void funceval(char s[]) {
         printf("error: invalid command\n");
 }
 
-/* addvar: save value val in variable var */
-void addvar(char var, double val)
-{
-    vars[tolower(var) - 97] = val;
+/* opeval: evaluate user entry stored in s, return result */
+void opeval(char operator) {
+    double operand;
+
+    switch (operator) {
+    case '+':
+        push(pop() + pop());
+        break;
+    case '*':
+        push(pop() * pop());
+        break;
+    case '-':
+        operand = pop();
+        push(pop() - operand);
+        break;
+    case '/':
+        operand = pop();
+        if (operand != 0.0)
+            push(pop() / operand);
+        else
+            printf("error: zero divisor\n");
+        break;
+    case '%':
+        operand = pop();
+        push((int) pop() % (int) operand);
+        break;
+    default:
+        printf("error: unknown operator %c\n", operator);
+        break;
+    }
 }
 
-/* getvar: return variable corresponding to var */
-double getvar(char var)
-{
-    return vars[tolower(var) - 97];
+/* vareval: evaluate variable passed as argument */
+void vareval(char var) {
+    int pos = var - 97;
+    if (vars[pos] == 0.0) {
+        vars[pos] = top();
+        pop();
+    } else
+        push(vars[pos]);
 }
 
 /* getop: get next operator or numeric operand */
@@ -219,13 +216,15 @@ int getop(char s[])
     while ((s[0] = c = getch()) == ' ' || c == '\t')
         ;
     s[1] = '\0';
+    if (c == '\n')
+        return NEWLINE;
     if (c == '-') { /* test for negative number */
         if (isdigit(c = getch())) { /* negative number input */
             s[0] = '-';
             s[++i] = c;
         } else {    /* minus operator input, put back on buffer */
             ungetch(c);
-            return s[i];
+            return OPERATOR;
         }
     }   /* function command/variable in input */
     if (isalpha(c)) {
@@ -240,10 +239,8 @@ int getop(char s[])
         ungetch(c);
         return COMMAND;
     }
-    if (!isdigit(c) && c != '.') {  /* operator */
-        s[0] = c;
+    if (!isdigit(c) && c != '.')
         return OPERATOR;
-    }
     if (isdigit(c))     /* collect integer part */
         while (isdigit(s[++i] = c = getch()))
             ;
