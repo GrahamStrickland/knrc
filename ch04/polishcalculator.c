@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>         /* for atof() */
-#include <math.h>           /* for sin(), exp(), pow(), etc. */
-#include <string.h>         /* for function commands */
-#include <ctype.h>          /* for character manipulation */
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#include <ctype.h>
 
 #define BUFSIZE     100     /* size of character input buffer */
 #define MAXVAL      100     /* maximum depth of val stack */
@@ -64,6 +64,7 @@ main()
             break;
         }
     }
+
     return 0;
 }
 
@@ -162,7 +163,7 @@ void funceval(char s[]) {
             push(pow(op1, (int)op2));
         else
             push(pow(op1, op2));
-    } else 
+    } else
         printf("error: invalid command\n");
 }
 
@@ -233,8 +234,6 @@ int getop(char s[])
             ;
         if (i == 1)
             return VARIABLE;
-        if (c == '\n')
-            ungetch(c);
         s[i] = '\0';
         ungetch(c);
         return COMMAND;
