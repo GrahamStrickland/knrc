@@ -239,7 +239,7 @@ int getop(char s[])
             ;
         if (i == 1)
             return VARIABLE;
-        s[i] = '\0';
+        s[i+1] = '\0';
         ungetch(c);
         return COMMAND;
     }
@@ -269,3 +269,4 @@ void ungetch(int c) /* push character back on input */
     else
         buf[bufp++] = c;
 }
+
