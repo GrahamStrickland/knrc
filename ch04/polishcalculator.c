@@ -34,7 +34,7 @@ int getch(void);
 void ungetch(int);
 
 /* reverse Polish calculator */
-main()
+main() 
 {
     int type, i;
     char s[MAXOP];
@@ -105,7 +105,8 @@ void duplicate(void)
 }
 
 /* swap: swap the top two values on the stack */
-void swap(void) {
+void swap(void) 
+{
     if (sp >= 1) {
         int temp;
         temp = val[sp];
@@ -116,14 +117,16 @@ void swap(void) {
 }
 
 /* clear: clear all values from the stack */
-void clear(void) {
+void clear(void) 
+{
     val[sp] = 0.0;
     while (sp > 0)
         val[--sp] = 0.0;
 }
 
 /* funceval: evaluate user entry stored in s */
-void funceval(char s[]) {
+void funceval(char s[]) 
+{
     int op1, op2, c;
 
     if (strcmp(s, "top") == 0) {
@@ -168,7 +171,8 @@ void funceval(char s[]) {
 }
 
 /* opeval: evaluate user entry stored in s, return result */
-void opeval(char operator) {
+void opeval(char operator) 
+{
     double operand;
 
     switch (operator) {
@@ -200,7 +204,8 @@ void opeval(char operator) {
 }
 
 /* vareval: evaluate variable passed as argument */
-void vareval(char var) {
+void vareval(char var) 
+{
     int pos = var - 97;
     if (vars[pos] == 0.0) {
         vars[pos] = top();
