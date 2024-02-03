@@ -10,7 +10,7 @@ main(int argc, char* argv[])
 
     itoa(n, s, i);
 
-    printf("%s", s);
+    printf("%d = %s\n", n, s);
 
     return 0;
 }
