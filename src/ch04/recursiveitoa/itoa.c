@@ -8,10 +8,10 @@ void itoa(int n, char s[], int i)
     if (n < 0) {
         s[0] = '-';
         n = -n;
-        i--;
         s[i] = '\0';
-    } else if (i != 0 && s[0] != '-')
-        s[0] = '+';
+    }
+    else if (n >> i == 1)
+        s[i] = '\0';
 
     if (n / 10)
         itoa(n / 10, s, --i);
