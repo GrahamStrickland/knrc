@@ -1,1 +1,1 @@
-void reverse(char s[], int len);
+void reverse(char s[], int start, int end);
