@@ -7,7 +7,7 @@
 void itoa(int n, char s[]);
 void reverse(char s[]);
 
-main()
+int main(int argc, char* argv[])
 {
     char s[MAXLEN];
     int n = INT_MIN;

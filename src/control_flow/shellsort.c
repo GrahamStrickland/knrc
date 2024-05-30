@@ -2,7 +2,7 @@
 
 void shellsort(int v[], int n);
 
-main()
+int main(int argc, char* argv[])
 {
     int i;
     int n = 13;

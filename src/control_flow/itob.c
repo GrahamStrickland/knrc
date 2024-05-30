@@ -6,7 +6,7 @@
 void itob(int n, char s[], int b);
 void reverse(char s[]);
 
-main()
+int main(int argc, char* argv[])
 {
     char s[MAXLEN];
     int n = -268435455, b = 2;

@@ -2,7 +2,7 @@
 
 int binsearch(int x, int v[], int n);
 
-main()
+int main(int argc, char* argv[])
 {
     /* search for 19 */
     int v[] = {1, 4, 10, 19, 23, 54, 97};

@@ -5,7 +5,7 @@
 void escape(char s[], char t[]);
 void unescape(char s[], char t[]);
 
-main()
+int main(int argc, char* argv[])
 {
     char inpString[MAXLINE] = "Hello, this is\na\tstring\n\tchars\n   ";
     char outpString[MAXLINE] = "";

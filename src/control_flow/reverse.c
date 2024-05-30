@@ -6,7 +6,7 @@
 int getLine(char line[], int maxline);
 void reverse(char s[]);
 
-main()
+int main(int argc, char* argv[])
 {
     int len;                  /* length of input line */
     char string[MAXLINE];     /* for storing strings */

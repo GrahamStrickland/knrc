@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-main()  /* count digits, white space, others */
+int main(int argc, char* argv[])  /* count digits, white space, others */
 {
     int c, i, nwhite, nother, ndigit[10];
 

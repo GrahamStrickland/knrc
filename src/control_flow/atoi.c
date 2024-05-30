@@ -6,7 +6,7 @@
 int getLine(char line[], int maxline);
 int atoi(char s[]);
 
-main()
+int main(int argc, char* argv[])
 {
     int len;                /* length of input line */
     char line[MAXLINE];     /* array to store line input. */

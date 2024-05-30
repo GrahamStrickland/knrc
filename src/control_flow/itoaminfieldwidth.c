@@ -6,7 +6,7 @@
 void itoa(int n, char s[], int minWidth);
 void reverse(char s[]);
 
-main()
+int main(int argc, char* argv[])
 {
     char s[MAXLEN];
     int n = -1959751051, minWidth = 15;

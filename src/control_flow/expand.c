@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <ctype.h>
-#include <string.h>
 
 #define MAXLINE 1000     /* maximum input line length */
 
 int getLine(char line[], int maxline);
 void expand(char s1[], char s2[]);
 
-main()
+int main(int argc, char* argv[])
 {
     int len;                                    /* length of input line */
     char string1[MAXLINE], string2[MAXLINE];    /* strings for storing input and output */

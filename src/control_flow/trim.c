@@ -6,7 +6,7 @@
 int getLine(char line[], int maxline);
 int trim(char s[]);
 
-main()
+int main(int argc, char* argv[])
 {
     int len;        /* current line length */
     int numChars;   /* store number of characters */
