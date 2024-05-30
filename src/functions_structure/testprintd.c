@@ -2,7 +2,7 @@
 
 #include "printd.h"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     printd(1013.0984);
     printf("\n");
@@ -15,4 +15,3 @@ main(int argc, char *argv[])
 
     return 0;
 }
-

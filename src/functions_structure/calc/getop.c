@@ -6,7 +6,7 @@
 #include "calc.h"
 
 /* getop: get next operator or numeric operand */
-getop(char s[]) {
+int getop(char s[]) {
     static char buf[BUFSIZE];
     static int bufp = 0;
     int i, c;
@@ -34,4 +34,3 @@ getop(char s[]) {
 
     return NUMBER;
 }
-

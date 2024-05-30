@@ -1,10 +1,11 @@
 #include <stdio.h>
+
 #define MAXLINE 1000        /* maximum input line length */
 
 int getLine(char line[], int max);
 int strrindex(char s[], char t);
 
-main()
+int main(int argc, char* argv[])
 {
     int pos = 0;        /* position of character to be searched for */
     char c = 'o';       /* character to be searched for */

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <ctype.h>
+
 #define MAXLINE 100        /* maximum input line length */
 
 int getLine(char line[], int max);
@@ -7,7 +8,7 @@ double atof(char s[]);
 int atoi(char s[]);
 
 /* rudimentary calculator */
-int main()
+int main(int argc, char* argv[])
 {
     double sum, atof(char []);
     char line[MAXLINE];
@@ -62,4 +63,3 @@ int atoi(char s[])
 
     return (int) atof(s);
 }
-

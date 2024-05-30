@@ -13,4 +13,3 @@ void printd(int n)
         printd(n / 10);
     putchar(n % 10 + '0');
 }
-

@@ -34,7 +34,7 @@ int getch(void);
 void ungetch(int);
 
 /* reverse Polish calculator */
-main() 
+int main(int argc, char* argv[]) 
 {
     int type, i;
     char s[MAXOP];
@@ -269,4 +269,3 @@ void ungetch(int c) /* push character back on input */
     else
         buf[bufp++] = c;
 }
-

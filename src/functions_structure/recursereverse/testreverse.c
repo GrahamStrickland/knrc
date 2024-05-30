@@ -2,7 +2,7 @@
 
 #include "reverse.h"
 
-main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     int len = 7;
     char s1[] = "Racecar";

@@ -7,7 +7,7 @@ double atof(char s[]);
 int atoi(char s[]);
 
 /* rudimentary calculator */
-main()
+int main(int argc, char* argv[])
 {
     double sum, atof(char []);
     char line[MAXLINE];

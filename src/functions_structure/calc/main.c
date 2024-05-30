@@ -6,7 +6,7 @@
 #define MAXOP 100   /* max size of operand or operator */
 
 /* reverse Polish calculator */
-main() 
+int main(int argc, char* argv[]) 
 {
     int type;
     double op2;
@@ -44,4 +44,3 @@ main()
     }
     return 0;
 }
-

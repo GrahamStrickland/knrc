@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "reverse.h"
 
 /* reverse: reverse s in place */

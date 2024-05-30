@@ -25,4 +25,3 @@ void swap(int v[], int i, int j)
     v[i] = v[j];
     v[j] = temp;
 }
-

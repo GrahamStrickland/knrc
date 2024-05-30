@@ -2,7 +2,7 @@
 
 #include "qsort.h"
 
-main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     int v[] = { 3, 14, 3, -19, 45, 2, 0, 100, 99 };
     int i, left = 0, right = 8;
@@ -21,4 +21,3 @@ main(int argc, char* argv[])
 
     printf("\n");
 }
-

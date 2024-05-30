@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 #define MAXLINE 1000        /* maximum input line length */
 
 int getLine(char line[], int max);
@@ -7,7 +8,7 @@ int strindex(char source[], char searchfor[]);
 char pattern[] = "ould";    /* pattern to seach for */
 
 /* find all lines matching pattern */
-main()
+int main(int argc, char* argv[])
 {
     char line[MAXLINE];
     int found = 0;
