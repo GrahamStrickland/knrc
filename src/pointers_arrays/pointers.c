@@ -46,4 +46,3 @@ void print_variables(int x, int y, int z[], int *ip)
     }
     printf(", *ip = %d\n", *ip);
 }
-

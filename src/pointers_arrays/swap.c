@@ -23,4 +23,3 @@ void swap(int *px, int *py) /* interchange *px and *py */
     *px = *py;
     *py = temp;
 }
-

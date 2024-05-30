@@ -32,4 +32,3 @@ int getint(int *pn)
         ungetch(c);
     return c;
 }
-
