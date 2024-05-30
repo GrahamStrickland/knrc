@@ -8,10 +8,12 @@ int getint(int *pn);
 
 int main(int argc, char* argv[])
 {
-    int n, array[SIZE];
-    
-    for (n = 0; n < SIZE && getint(&array[n]) != EOF; n++)
-        ;
+    if (argc == 2) {
+        if (getint((int*)argv[1]) > 0)
+            printf("Success, %d", *argv[1]);
+        else
+            printf("Failure");
+    }
 
     return 0;
 }
