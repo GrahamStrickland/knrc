@@ -2,12 +2,17 @@
 
 #include "../functions_structure/calc/getch.c"
 
-int getch(void);
-void ungetch(int);
+#define SIZE 10
+
 int getint(int *pn);
 
 int main(int argc, char* argv[])
 {
+    int n, array[SIZE];
+    
+    for (n = 0; n < SIZE && getint(&array[n]) != EOF; n++)
+        ;
+
     return 0;
 }
 
