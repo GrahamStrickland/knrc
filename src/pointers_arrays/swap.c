@@ -2,24 +2,23 @@
 
 void swap(int *px, int *py);
 
-int main()
-{
-    int a = 2, b = 5;
+int main() {
+  int a = 2, b = 5;
 
-    printf("Before swap, a = %d, b = %d\n", a, b);
+  printf("Before swap, a = %d, b = %d\n", a, b);
 
-    swap(&a, &b);
+  swap(&a, &b);
 
-    printf("After swap, a = %d, b = %d\n", a, b);
+  printf("After swap, a = %d, b = %d\n", a, b);
 
-    return 0;
+  return 0;
 }
 
 void swap(int *px, int *py) /* interchange *px and *py */
 {
-    int temp;
+  int temp;
 
-    temp = *px;
-    *px = *py;
-    *py = temp;
+  temp = *px;
+  *px = *py;
+  *py = temp;
 }
