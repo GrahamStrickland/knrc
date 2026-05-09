@@ -30,6 +30,10 @@ int main() {
   (*ip)++;
   print_variables(x, y, z, ip);
 
+  int *iq;
+  iq = ip;
+  printf("*iq = %d\n", *iq);
+
   return 0;
 }
 
