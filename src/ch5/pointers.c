@@ -8,7 +8,7 @@ int main() {
 
   int i;
   for (i = 0; i < 10; ++i)
-    z[i] = i * 2;
+    z[i] = i + 3;
 
   ip = &x; /* ip now points to x */
   print_variables(x, y, z, ip);

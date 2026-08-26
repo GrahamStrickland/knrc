@@ -1,20 +1,22 @@
 #include <ctype.h>
+#include <stdlib.h>
 
-#include "../functions_structure/calc/getch.c"
+#include "../ch4/calc/getch.c"
 
 #define SIZE 10
 
-int getint(int *pn);
+int n, array[SIZE], getint(int *);
 
 int main(int argc, char *argv[]) {
-  if (argc == 2) {
-    if (getint((int *)argv[1]) > 0)
-      printf("Success, %d", *argv[1]);
-    else
-      printf("Failure");
-  }
+  int res;
+  for (n = 0; n < SIZE && (res = getint(&array[n])) != EOF && res != 0; n++)
+    ;
 
-  return 0;
+  int i;
+  for (i = 0; i < SIZE && i < n; i++)
+    printf("%d ", array[i]);
+
+  return EXIT_SUCCESS;
 }
 
 /* getint: get next integer from input into *pn */
@@ -30,6 +32,10 @@ int getint(int *pn) {
   sign = (c == '-') ? -1 : 1;
   if (c == '+' || c == '-')
     c = getch();
+  if (!isdigit(c)) {
+    ungetch(c); /* also not a number */
+    return 0;
+  }
   for (*pn = 0; isdigit(c); c = getch())
     *pn = 10 * *pn + (c - '0');
   *pn *= sign;
