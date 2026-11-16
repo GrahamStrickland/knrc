@@ -26,23 +26,23 @@ int getfloat(float *pf) {
 
   while (isspace(c = getch())) /* skip white space */
     ;
-  if (!isdigit(c) && c != EOF && c != '+' && c != '-') {
+  if (!isdigit(c) && c != EOF && c != '+' && c != '-' && c != '.') {
     ungetch(c); /* it's not a number */
     return 0;
   }
   sign = (c == '-') ? -1 : 1;
   if (c == '+' || c == '-')
     c = getch();
-  for (*pf = 0; isdigit(c); c = getch())
+  for (*pf = 0.0; isdigit(c); c = getch())
     *pf = 10.0 * *pf + (c - '0');
   if (c == '.') {
-    int frac, digits;
-    for (*pf = 0, digits = 0, frac = 0; isdigit(c); c = getch(), digits++)
-      frac = 10.0 * frac + (c - '0');
-
-    *pf += *pf + (float)frac / (float)(10.0 * digits);
+    int num, denom;
+    c = getch();
+    for (num = 0, denom = 1; isdigit(c); c = getch(), denom *= 10)
+      num = 10 * num + (c - '0');
+    *pf += (float)num / (float)(denom);
   }
-  *pf *= sign;
+  *pf *= (float)sign;
   if (c != EOF)
     ungetch(c);
   return c;
